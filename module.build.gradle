@@ -1,0 +1,97 @@
+plugins {
+    if(isModule.toBoolean()){
+
+    }
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId "com.gleely.gradledemo"
+        minSdkVersion 19
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "DOMAIN", HTTP_ONLINE)
+        }
+        debug {
+
+            //优化构建速度 对调试build停用Crashlytics
+            ext.enableCrashlytics = false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "DOMAIN", HTTP_OFFLINE)
+
+        }
+
+    }
+
+    //构建变体：[minApi24, minApi23, minApi21][Demo, Full][Debug, Release]
+    //对应的 APK：app-[minApi24, minApi23, minApi21]-[demo, full]-[debug, release].apk
+    //创建一个version的变种维度，添加demo 和full产品变种
+    flavorDimensions "api", "version"
+    productFlavors {
+        demo {
+            dimension "version"
+            //applicationId重置 com.gleely.gradledemo
+            //applicationId "com.gleely.gradledemo.demo"
+            //applicationId重置追加 com.gleely.gradle.demo
+            applicationIdSuffix ".demo"
+            versionNameSuffix "-demo"
+        }
+
+
+        full {
+            dimension "version"
+            applicationIdSuffix ".full"
+            versionNameSuffix "-full"
+        }
+        //开发环境
+//        dev {
+//            //优化构建速度 可以指定语言和分辨率
+//            resConfigs "xhdpi"
+//        }
+
+        dev {
+            dimension "api"
+
+        }
+
+        online {
+            dimension "api"
+        }
+
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    api project(":library")
+}

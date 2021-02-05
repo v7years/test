@@ -1,0 +1,11 @@
+ext {
+    def isModule = false
+
+    androidId = [
+
+    ]
+
+    versions = []
+
+
+}
